@@ -3,21 +3,23 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 
-const users = [
-  {
-    email: 'jesus@numengames.com',
-    password: '$2b$12$iZmNV/OVLFoEqqW/aP2IT.OtiWpdP..YM75NsU/p9OkVWaN5jE1uu'
-  },
-  {
-    email: 'pablofm@numengames.com',
-    password: '$2b$12$iZmNV/OVLFoEqqW/aP2IT.OtiWpdP..YM75NsU/p9OkVWaN5jE1uu'
-  },
-  {
-    email: 'christianmartens@numengames.com',
-    password: '$2b$12$iZmNV/OVLFoEqqW/aP2IT.OtiWpdP..YM75NsU/p9OkVWaN5jE1uu'
-  }
-];
+// Función para obtener usuarios de las variables de entorno
+function getUsersFromEnv() {
+  const users: { email: string; password: string }[] = [];
+  const userEnv = process.env.USERS || '';
+  const userEntries = userEnv.split(';');
 
+  userEntries.forEach(entry => {
+    const [email, password] = entry.split(',');
+    if (email && password) {
+      users.push({ email, password });
+    }
+  });
+
+  return users;
+}
+
+const users = getUsersFromEnv();
 const SECRET_KEY = process.env.JWT_SECRET_KEY!;
 
 export async function POST(request: Request) {
